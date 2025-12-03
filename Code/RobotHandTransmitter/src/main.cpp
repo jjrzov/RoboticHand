@@ -121,6 +121,7 @@ void TransmitTask(void *p_params) {
     } else {
       message.thumb_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.println(message.thumb_reading);
 
     sum = 0;
     count = 0;
