@@ -19,12 +19,12 @@ const uint32_t PINKIE_PIN = GPIO_NUM_32;
 const uint32_t PALM_PIN = GPIO_NUM_33;
 
 struct packet {
-  uint32_t thumb_reading;
-  uint32_t index_reading;
-  uint32_t middle_reading;
-  uint32_t ring_reading;
-  uint32_t pinkie_reading;
-  uint32_t palm_reading;
+  uint16_t thumb_reading;
+  uint16_t index_reading;
+  uint16_t middle_reading;
+  uint16_t ring_reading;
+  uint16_t pinkie_reading;
+  uint16_t palm_reading;
 };
 
 class Hand {
@@ -37,12 +37,12 @@ class Hand {
         QueueHandle_t palm;
 
         Hand() {
-          thumb = xQueueCreate(10, sizeof(uint32_t));
-          index = xQueueCreate(10, sizeof(uint32_t));
-          middle = xQueueCreate(10, sizeof(uint32_t));
-          ring = xQueueCreate(10, sizeof(uint32_t));
-          pinkie = xQueueCreate(10, sizeof(uint32_t));
-          palm = xQueueCreate(10, sizeof(uint32_t));
+          thumb = xQueueCreate(10, sizeof(uint16_t));
+          index = xQueueCreate(10, sizeof(uint16_t));
+          middle = xQueueCreate(10, sizeof(uint16_t));
+          ring = xQueueCreate(10, sizeof(uint16_t));
+          pinkie = xQueueCreate(10, sizeof(uint16_t));
+          palm = xQueueCreate(10, sizeof(uint16_t));
         }
 };
 
@@ -53,12 +53,12 @@ void ReadSensorsTask(void *p_params) {
   analogSetAttenuation(ADC_ATTENUATION);
 
   BaseType_t retVal;
-  uint32_t thumb_reading;
-  uint32_t index_reading;
-  uint32_t middle_reading;
-  uint32_t ring_reading;
-  uint32_t pinkie_reading;
-  uint32_t palm_reading;
+  uint16_t thumb_reading;
+  uint16_t index_reading;
+  uint16_t middle_reading;
+  uint16_t ring_reading;
+  uint16_t pinkie_reading;
+  uint16_t palm_reading;
 
   while(1) {
     // Read latest sensor data and add to queue for each finger
@@ -121,6 +121,7 @@ void TransmitTask(void *p_params) {
     } else {
       message.thumb_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("Thumb: ");
     Serial.println(message.thumb_reading);
 
     sum = 0;
@@ -135,6 +136,8 @@ void TransmitTask(void *p_params) {
     } else {
       message.index_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("\tIndex: ");
+    Serial.println(message.index_reading);
 
     sum = 0;
     count = 0;
@@ -148,6 +151,8 @@ void TransmitTask(void *p_params) {
     } else {
       message.middle_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("\t\t\tMiddle: ");
+    Serial.println(message.middle_reading);
 
     sum = 0;
     count = 0;
@@ -161,6 +166,8 @@ void TransmitTask(void *p_params) {
     } else {
       message.ring_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("\t\t\t\tRing: ");
+    Serial.println(message.ring_reading);
 
     sum = 0;
     count = 0;
@@ -174,6 +181,8 @@ void TransmitTask(void *p_params) {
     } else {
       message.pinkie_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("\t\t\t\t\tPinkie: ");
+    Serial.println(message.pinkie_reading);
 
     sum = 0;
     count = 0;
@@ -187,6 +196,8 @@ void TransmitTask(void *p_params) {
     } else {
       message.palm_reading = 0;  // or previous value, or some sentinel
     }
+    Serial.print("\t\t\t\t\t\tPalm: ");
+    Serial.println(message.palm_reading);
 
     esp_err_t result = esp_now_send(BROADCAST_ADDRESS, (uint8_t *) &message, sizeof(packet));
    

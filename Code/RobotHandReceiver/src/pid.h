@@ -26,5 +26,10 @@ void PID_Reset(PID_t *pid);
 void InitPIDs();
 
 extern PID_t pid_thumb;
+extern PID_t pid_index;
+extern PID_t pid_middle;
+extern PID_t pid_ring;
+extern PID_t pid_pinkie;
+extern PID_t pid_palm;
 
 #endif
