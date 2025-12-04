@@ -98,7 +98,7 @@ void ControllerTask(void *p_params) {
   HandState state = HOMING_STATE;
 
   // home encoder counts (fill these with your real home values)
-  Hand_Data home = {10};
+  Hand_Data home = {15};
 
   // current target positions (for POSITION_CONTROL)
   Hand_Data targets = home;  // start at home
@@ -109,11 +109,12 @@ void ControllerTask(void *p_params) {
   const float dt = 0.02f; // 20 ms in seconds
 
   while(1) {
-    Serial.println(state);
+    // Serial.print("State: ");
+    // Serial.println(state);
     // Read actual encoder values 
     uint32_t enc_thumb  = ReadEncoder(EXT_ADC_THUMB);
-    Serial.print("Curr Enc: ");
-    Serial.println(enc_thumb);
+    // Serial.print("Curr Enc: ");
+    // Serial.println(enc_thumb);
 
     switch (state) {
       case HOMING_STATE: {
@@ -126,7 +127,7 @@ void ControllerTask(void *p_params) {
           StopAllMotors();
           // ResetAllPIDs();               // clear integrators before PID mode
           state = POSITION_CONTROL_STATE;
-          Serial.println("Finished homing");
+          // Serial.println("Finished homing");
         }
         break;
       }
@@ -136,10 +137,12 @@ void ControllerTask(void *p_params) {
         uint32_t val;
         if (xQueueReceive(glove.thumb_queue,  &val, 0) == pdTRUE) {
           targets.thumb_data = val;
-          Serial.print("Received Data: ");
-          Serial.println(val);
+          // Serial.print("Newly Received Data: ");
+          // Serial.println(val);
         }
         
+        // Serial.print("Thumb target: ");
+        // Serial.println(targets.thumb_data);
         // 3) Run PID for each finger
         PositionControlFinger(enc_thumb,  targets.thumb_data,
                               &pid_thumb,  THUMB_PWM_CHANNEL,  THUMB_PH_PIN,  dt);
@@ -147,7 +150,11 @@ void ControllerTask(void *p_params) {
         break;
       }
 
-      case ERROR_STATE:
+      case ERROR_STATE: {
+        StopAllMotors();
+
+        break;
+      }
       default:
         StopAllMotors();
 
@@ -159,7 +166,6 @@ void ControllerTask(void *p_params) {
 }
 
 void setup() {
-  StopAllMotors();
   Serial.begin(115200);
   delay(5000);
   BaseType_t retVal;
@@ -177,8 +183,6 @@ void setup() {
   if (retVal != pdPASS) {
     Serial.println("Failed to create Receiver Task\n");
   }
-
-  StopAllMotors();
 
 }
 

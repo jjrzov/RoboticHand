@@ -46,7 +46,7 @@ float PID_Step(PID_t *pid, float error, float dt) {
 void SetPhase(float u, uint32_t motor_phase_pin) {
   // Find which direction the motor should be moved to get to desired encoder value
   // Set phase pin to match calculated direction
-  digitalWrite(motor_phase_pin,(u >= 0.0f) ? LOW : HIGH);
+  digitalWrite(motor_phase_pin,(u >= 0.0f) ? HIGH : LOW);
 }
 
 void PositionControlFinger(uint32_t enc, uint32_t target,
@@ -54,26 +54,23 @@ void PositionControlFinger(uint32_t enc, uint32_t target,
                            float dt)
 {
   float error = (float)target - (float)enc;
-  Serial.print("PID Error: ");
-  Serial.println(error);
+  // Serial.print("PID Error: ");
+  // Serial.println(error);
   float u = PID_Step(pid, error, dt);  // signed
 
   SetPhase(u, phase_pin); // Find direction to move in
-  Serial.print("UUUUUUUUUUUUUUUUUUUUUU: ");
-  Serial.println(u);
-
-//   uint32_t pwm = (uint32_t)fabs(u);
-//   if (pwm > 1023) pwm = 1023;         // 10-bit limit
+  // Serial.print("UUUUUUUUUUUUUUUUUUUUUU: ");
+  // Serial.println(u);
 
   float mag = fabsf(u);
   int pwm = (int)mag;
 
-  Serial.print("PWM: ");
-  Serial.println(pwm);
+  // Serial.print("PWM: ");
+  // Serial.println(pwm);
 
   // Add a minimum like homing
-  const int POS_PWM_MIN = 150;   // tune this
-  const int POS_PWM_MAX = 1000; // full scale
+  const int POS_PWM_MIN = 300;   // tune this
+  const int POS_PWM_MAX = 1023; // full scale
 
   if (pwm > POS_PWM_MAX) pwm = POS_PWM_MAX;
   if (pwm > 0 && pwm < POS_PWM_MIN) pwm = POS_PWM_MIN;  // prevent dead zone
@@ -87,7 +84,7 @@ bool HomeFinger(uint32_t enc, uint32_t home_target,
 {
   int32_t err = (int32_t)home_target - (int32_t)enc;
   int32_t mag = abs(err);
-  Serial.println("Homing");
+  // Serial.println("Homing");
 
 
   if (mag <= HOMING_THRESHOLD) {
