@@ -10,7 +10,7 @@ palm bending motion on the robot hand.
 The repository is split into 3 parts: 
 * Mechanical Design Files
 * PCB Files
-* Software Files.
+* Software Files    (<https://github.com/jjrzov/RoboticHand/tree/main/Code>)
 
 More information can be found in the report:
 <https://docs.google.com/document/d/1OJhpxcHGqPs-KphNlcnnhu6IluXgC120gNegF1xwxDM/edit?usp=sharing>
