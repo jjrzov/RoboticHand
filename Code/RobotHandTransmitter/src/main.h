@@ -1,3 +1,15 @@
+/**
+ * @file main.h
+ * @brief Glove transmitter interface for sensor acquisition and ESP-NOW communication.
+ *
+ * This header defines the public interface for the glove-side firmware, including:
+ *  - Data structures for packaging sensor readings
+ *  - A Hand class encapsulating FreeRTOS queues for each finger and the palm
+ *  - Hardware configuration constants for ADC inputs
+ *  - ESP-NOW communication parameters
+ *  - FreeRTOS task prototypes for sensing and transmission
+ */
+
 #ifndef MAIN_H
 #define MAIN_H
 
