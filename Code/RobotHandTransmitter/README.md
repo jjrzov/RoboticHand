@@ -18,7 +18,7 @@ Each finger has its own queue when communicating between tasks, but to make the 
 
 In the read sensors task, the voltage is read from each flex sensor and published to a queue. The transmit task is constantly reading from each queue until it is empty. An average is then taken while making sure to avoid dividng by zero. 
 
-'''
+```
   // Read from queue until empty and take average
   while(xQueueReceive(queue, &reading, 0) == pdTRUE) {
     sum += reading;
@@ -30,11 +30,11 @@ In the read sensors task, the voltage is read from each flex sensor and publishe
   } else {
     return 0; // Don't want to divide by zero if nothing in queue
   }
-'''  
+```
 
 Setup for ESP-NOW is all done in the setup function before the scheduler begins. To avoid broadcasting to any ESP-32s nearby, we broadcast specifically to the MAC address of the device we want
 
-'''
+```
   // Register peer
   memcpy(peerInfo.peer_addr, BROADCAST_ADDRESS, 6);
   peerInfo.channel = 0;  
@@ -45,4 +45,4 @@ Setup for ESP-NOW is all done in the setup function before the scheduler begins.
     Serial.println("Failed to add peer");
     return false;
   }
-'''
+```

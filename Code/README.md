@@ -6,4 +6,4 @@ communication between the both ESPs happening through ESP-NOW.
 
 Receiver README: <https://github.com/jjrzov/RoboticHand/blob/main/Code/RobotHandReceiver/README.md>
 
-Transmitter README: https://github.com/jjrzov/RoboticHand/blob/main/Code/RobotHandTransmitter/README.md>
+Transmitter README: <https://github.com/jjrzov/RoboticHand/blob/main/Code/RobotHandTransmitter/README.md>
