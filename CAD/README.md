@@ -1,5 +1,6 @@
 This folder contains all of the CAD files necessary to construct the robotic hand.
 
+
 Hand Assembly.SLDASM: Solidworks assembly containing the PCB, spacer, palm, mount, thumb, and one finger
 
 Mount.SLDPRT: A Solidworks model of a mount for the hand to sit on
