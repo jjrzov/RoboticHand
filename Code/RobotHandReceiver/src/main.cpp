@@ -1,28 +1,63 @@
+/**
+ * @file main.cpp
+ * @brief ESP-NOW robotic hand receiver and PID motor controller.
+ *
+ * This application:
+ *  - Receives flex sensor data via ESP-NOW
+ *  - Converts flex readings to encoder targets
+ *  - Performs homing and position control using PID
+ *  - Drives DC motors using PWM + phase control
+ *
+ * FreeRTOS tasks are used for communication and control.
+ */
+
 #include "Constants.h"
 #include "pid.h"
 
+/** @name PID controllers for each finger and palm
+ *  @{
+ */
 PID_t pid_thumb;
 PID_t pid_index;
 PID_t pid_middle;
 PID_t pid_ring;
 PID_t pid_pinkie;
 PID_t pid_palm;
+/** @} */
 
+
+/**
+ * @brief Queue container for desired encoder targets for each finger.
+ */
 Hand_Queues glove = Hand_Queues();
 
-// Receiver Queue
+/**
+ * @brief Queue used to receive ESP-NOW packets from the glove transmitter.
+ */
 QueueHandle_t packet_queue = xQueueCreate(1, sizeof(Hand_Data));
 
-// External ADC Instance
+
+/**
+ * @brief External ADC instance for rotary encoder (potentiometer) readings.
+ */
 Adafruit_ADS7830 ad7830;
 
-// ESP-NOW
+/**
+ * @brief ESP-NOW peer information structure.
+ */
 esp_now_peer_info_t peerInfo;
 
 
-uint32_t FlexToEncoder(uint32_t flex_value) {
-  // Convert from flex readings to encoder values 
-
+/**
+ * @brief Convert flex sensor reading to encoder target value.
+ *
+ * Performs clamping and linear interpolation between calibrated
+ * flex sensor limits and encoder limits.
+ *
+ * @param flex_value Raw flex sensor reading.
+ * @return Corresponding encoder target value.
+ */
+uint32_t FlexToEncoder(uint32_t flex_value) { 
   // Clamp input
   if (flex_value <= F_MIN) return (uint32_t)E_MIN;
   if (flex_value >= F_MAX) return (uint32_t)E_MAX;
@@ -34,6 +69,16 @@ uint32_t FlexToEncoder(uint32_t flex_value) {
   return (uint32_t)enc;
 }
 
+/**
+ * @brief FreeRTOS task that processes received ESP-NOW packets.
+ *
+ * This task:
+ *  - Waits for incoming Hand_Data packets
+ *  - Converts flex values to encoder targets
+ *  - Dispatches targets to individual finger queues
+ *
+ * @param p_params Task parameters (unused).
+ */
 void ReceiverTask(void *p_params) {
   Hand_Data recv_data, enc_data;
   
@@ -47,9 +92,6 @@ void ReceiverTask(void *p_params) {
       enc_data.pinkie_data = FlexToEncoder(recv_data.pinkie_data);
       enc_data.palm_data = FlexToEncoder(recv_data.palm_data);
 
-      // Serial.print("Enc Goal: ");
-      // Serial.println(enc_data.ring_data);
-
       // Send data to other tasks with queue
       xQueueSend(glove.thumb_queue, &enc_data.thumb_data, 0);
       xQueueSend(glove.index_queue, &enc_data.index_data, 0);
@@ -61,7 +103,16 @@ void ReceiverTask(void *p_params) {
   }
 }
 
-// callback function that will be executed when data is received
+/**
+ * @brief ESP-NOW receive callback.
+ *
+ * Copies the received packet into a FreeRTOS queue for processing
+ * by ::ReceiverTask.
+ *
+ * @param mac          MAC address of sender.
+ * @param incomingData Pointer to received data buffer.
+ * @param len          Length of received data in bytes.
+ */
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {  
   Hand_Data data;
   memcpy(&data, incomingData, sizeof(data));
@@ -70,6 +121,15 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   return;
 }
 
+
+/**
+ * @brief Initialize ESP-NOW communication subsystem.
+ *
+ * Sets WiFi to station mode, initializes ESP-NOW,
+ * and registers the receive callback.
+ *
+ * @return true on success, false on failure.
+ */
 bool InitComms() {
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -86,6 +146,11 @@ bool InitComms() {
   return true;
 }
 
+/**
+ * @brief Initialize the external ADS7830 ADC.
+ *
+ * @return true if ADC initialization succeeds, false otherwise.
+ */
 bool InitADC() {
   // Initialize external ADC
   if (!ad7830.begin()) {
@@ -95,6 +160,12 @@ bool InitADC() {
   return true;
 }
 
+/**
+ * @brief Initialize PWM channels and GPIOs for all motors.
+ *
+ * Configures PWM frequency, resolution, output pins,
+ * and phase direction pins for each motor.
+ */
 void InitMotors() {
   // Initialize pins to control motors
 
@@ -130,11 +201,22 @@ void InitMotors() {
   return;
 }
 
+/**
+ * @brief Read a rotary encoder value via the external ADC.
+ *
+ * @param ext_adc_num External ADC channel number.
+ * @return Raw ADC reading corresponding to encoder position.
+ */
 uint32_t ReadEncoder(uint8_t ext_adc_num) {
   // Read encoder value from rotary potentiometer
   return ad7830.readADCsingle(ext_adc_num);
 }
 
+/**
+ * @brief Stop all motors immediately.
+ *
+ * Sets all PWM duty cycles to zero.
+ */
 void StopAllMotors() {
   // Turn off all motors by setting pwm to zero
   ledcWrite(THUMB_PWM_CHANNEL, 0);
@@ -146,6 +228,15 @@ void StopAllMotors() {
   return;
 }
 
+/**
+ * @brief Main control FreeRTOS task implementing the hand state machine.
+ *
+ * States:
+ *  - HOMING_STATE: Drive all fingers to known home positions
+ *  - POSITION_CONTROL_STATE: Run PID control using received targets
+ *
+ * @param p_params Task parameters (unused).
+ */
 void ControllerTask(void *p_params) {
   HandState state = HOMING_STATE;
 
@@ -170,23 +261,6 @@ void ControllerTask(void *p_params) {
     uint32_t enc_ring = ReadEncoder(EXT_ADC_RING);
     uint32_t enc_pinkie = ReadEncoder(EXT_ADC_PINKIE);
     uint32_t enc_palm = ReadEncoder(EXT_ADC_PALM);
-    // Serial.print("Enc Thumb: ");
-    // Serial.println(enc_thumb);
-
-    // Serial.print("\tEnc Index: ");
-    // Serial.println(enc_index);
-
-    // Serial.print("\t\tEnc Middle: ");
-    // Serial.println(enc_middle);
-
-    // Serial.print("\t\t\tEnc Ring: ");
-    // Serial.println(enc_ring);
-
-    // Serial.print("\t\t\t\tEnc Pinkie: ");
-    // Serial.println(enc_pinkie);
-
-    // Serial.print("\t\t\t\t\tEnc Palm: ");
-    // Serial.println(enc_palm);
 
     switch (state) {
       case HOMING_STATE: {
@@ -210,34 +284,6 @@ void ControllerTask(void *p_params) {
 
         bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok 
                               && pinkie_ok && palm_ok;
-
-
-        if (!thumb_ok) {
-          Serial.print("Enc Thumb: ");
-          Serial.println(enc_thumb);
-        }
-
-        if (!index_ok) {
-          Serial.print("\tEnc Index: ");
-          Serial.println(enc_index);
-        }
-
-        if (!middle_ok) {
-          Serial.print("\t\tEnc Middle: ");
-          Serial.println(enc_middle);
-        }
-
-        if (!ring_ok) {
-          Serial.print("\t\t\tEnc Ring: ");
-          Serial.println(enc_ring);
-        }
-
-        if (!pinkie_ok) {
-          Serial.print("\t\t\t\tEnc Pinkie: ");
-          Serial.println(enc_pinkie);
-        }
-
-        bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok && pinkie_ok; 
 
         if (all_homed) {
           StopAllMotors();
@@ -298,7 +344,6 @@ void ControllerTask(void *p_params) {
       
       default:
         StopAllMotors();
-
         break;
     }
 
@@ -306,6 +351,11 @@ void ControllerTask(void *p_params) {
   }
 }
 
+/**
+ * @brief Arduino setup function.
+ *
+ * Initializes communication, ADC, motors, and creates FreeRTOS tasks.
+ */
 void setup() {
   Serial.begin(115200);
   delay(2000);
@@ -313,7 +363,6 @@ void setup() {
 
   InitComms();
   InitADC();
-  delay(10000);
   InitMotors();
 
   retVal = xTaskCreate(ControllerTask, "Controller Task", 2048, NULL, 1, NULL);
@@ -328,6 +377,9 @@ void setup() {
 
 }
 
+/**
+ * @brief Arduino main loop (unused).
+ */
 void loop() {
   vTaskDelay(1000000);
 }

@@ -1,5 +1,30 @@
+/**
+ * @file pid.cpp
+ * @brief PID control and motor control helpers for robotic hand fingers.
+ *
+ * This module provides:
+ *  - Generic PID initialization, reset, and step functions
+ *  - Homing control logic for DC motors with encoders
+ *  - Position control using PID with PWM + phase output
+ *
+ * Designed for use with FreeRTOS-based embedded systems.
+ */
+
 #include "pid.h"
 
+
+/**
+ * @brief Initialize a PID controller structure.
+ *
+ * Sets controller gains, output limits, and clears internal state.
+ *
+ * @param pid      Pointer to PID controller structure.
+ * @param kp       Proportional gain.
+ * @param ki       Integral gain.
+ * @param kd       Derivative gain.
+ * @param out_min  Minimum allowable output.
+ * @param out_max  Maximum allowable output.
+ */
 void PID_Init(PID_t *pid, float kp, float ki, float kd, float out_min, float out_max) {
   pid->kp = kp;
   pid->ki = ki;
@@ -11,6 +36,11 @@ void PID_Init(PID_t *pid, float kp, float ki, float kd, float out_min, float out
   return;
 }
 
+/**
+ * @brief Initialize all PID controllers used by the robotic hand.
+ *
+ * Sets gains and output limits for all fingers and palm.
+ */
 void InitPIDs() {
   // output range: -1023..1023 for 10-bit PWM
   PID_Init(&pid_thumb,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
@@ -22,6 +52,13 @@ void InitPIDs() {
   return;
 }
 
+/**
+ * @brief Reset a PID controller's internal state.
+ *
+ * Clears the integral accumulator and previous error term.
+ *
+ * @param pid Pointer to PID controller structure.
+ */
 void PID_Reset(PID_t *pid) {
   // Reset integral and prev terms of pid
   pid->integral = 0.0f;
@@ -29,17 +66,18 @@ void PID_Reset(PID_t *pid) {
   return;
 }
 
-void ResetAllPIDs() {
-  // Reset the prev and integral terms of all fingers
-  PID_Reset(&pid_thumb);
-  PID_Reset(&pid_index);
-  PID_Reset(&pid_middle);
-  PID_Reset(&pid_ring);
-  PID_Reset(&pid_pinkie);
-  PID_Reset(&pid_palm);
-  return;
-}
-
+/**
+ * @brief Perform one PID control step.
+ *
+ * Computes the control output using proportional, integral,
+ * and derivative terms and applies output clamping.
+ *
+ * @param pid    Pointer to PID controller structure.
+ * @param error  Current control error (setpoint - measurement).
+ * @param dt     Time step in seconds since last update.
+ *
+ * @return Saturated control output value.
+ */
 float PID_Step(PID_t *pid, float error, float dt) {
   pid->integral += error * dt;
 
@@ -53,12 +91,34 @@ float PID_Step(PID_t *pid, float error, float dt) {
   return out;
 }
 
+/**
+ * @brief Set motor direction based on signed control effort.
+ *
+ * Uses the sign of the control signal to determine the motor
+ * rotation direction via the phase pin.
+ *
+ * @param u               Signed control output.
+ * @param motor_phase_pin GPIO pin controlling motor direction.
+ */
 void SetPhase(float u, uint32_t motor_phase_pin) {
   // Find which direction the motor should be moved to get to desired encoder value
   // Set phase pin to match calculated direction
   digitalWrite(motor_phase_pin,(u >= 0.0f) ? HIGH : LOW);
 }
 
+/**
+ * @brief Perform PID-based position control for a single finger motor.
+ *
+ * Computes the control effort using PID, sets motor direction,
+ * enforces a minimum PWM threshold, and applies the PWM output.
+ *
+ * @param enc          Current encoder reading.
+ * @param target       Desired encoder target value.
+ * @param pid          Pointer to PID controller for this finger.
+ * @param pwm_channel  LEDC PWM channel controlling the motor.
+ * @param phase_pin    GPIO pin controlling motor direction.
+ * @param dt           Control loop timestep in seconds.
+ */
 void PositionControlFinger(uint32_t enc, uint32_t target,
                            PID_t *pid, int pwm_channel, int phase_pin,
                            float dt)
@@ -82,6 +142,21 @@ void PositionControlFinger(uint32_t enc, uint32_t target,
   return;
 }
 
+
+/**
+ * @brief Home a single finger motor to a reference position.
+ *
+ * Drives the motor toward a known home encoder value using
+ * a proportional controller until the error falls below
+ * ::HOMING_THRESHOLD.
+ *
+ * @param enc          Current encoder reading.
+ * @param home_target  Desired home encoder value.
+ * @param pwm_channel  LEDC PWM channel controlling the motor.
+ * @param phase_pin    GPIO pin controlling motor direction.
+ *
+ * @return true if the finger is homed, false otherwise.
+ */
 bool HomeFinger(uint32_t enc, uint32_t home_target,
                 int pwm_channel, int phase_pin)
 {
