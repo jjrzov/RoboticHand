@@ -18,15 +18,15 @@ const uint8_t EXT_ADC_PALM = 2;
 const float HOMING_KP = 0.5f;
 const uint32_t HOMING_PWM_MIN = 150;
 const uint32_t HOMING_PWM_MAX = 800;
-const uint32_t HOMING_THRESHOLD = 10;
+const uint32_t HOMING_THRESHOLD = 20;
 
 // Motor GPIOs
 const int MOTOR_PWM_FREQ = 15000;     // 15kHz PWM Signal
 const int MOTOR_PWM_RESOLUTION = 10;  // 10 bit PWM Resolution
 
 const int THUMB_PWM_CHANNEL = 0;      // LED PWM Channel 0
-const int THUMB_PWM_PIN = 5;  // GPIO 5
-const int THUMB_PH_PIN = 2;   // GPIO 2
+const int THUMB_PWM_PIN = 2;  // GPIO 5
+const int THUMB_PH_PIN = 5;   // GPIO 2
 
 const int INDEX_PWM_CHANNEL = 1;      // LED PWM Channel 1
 const int INDEX_PWM_PIN = 4;  // GPIO 4
@@ -53,8 +53,8 @@ const float F_MIN = 142.0f;   // flex at fully open
 const float F_MAX = 1100.0f;   // flex at fully closed
 
 // Encoder Range
-const float E_MIN = 5.0f;     // encoder at fully open
-const float E_MAX = 250.0f;   // encoder at fully closed
+const float E_MIN = 15.0f;     // encoder at fully open
+const float E_MAX = 240.0f;   // encoder at fully closed
 
 
 struct Hand_Data {

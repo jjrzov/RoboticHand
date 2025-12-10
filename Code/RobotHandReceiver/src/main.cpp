@@ -47,7 +47,9 @@ void ReceiverTask(void *p_params) {
       enc_data.pinkie_data = FlexToEncoder(recv_data.pinkie_data);
       enc_data.palm_data = FlexToEncoder(recv_data.palm_data);
 
-      // Serial.println(enc_data.index_data);
+      // Serial.print("Enc Goal: ");
+      // Serial.println(enc_data.ring_data);
+
       // Send data to other tasks with queue
       xQueueSend(glove.thumb_queue, &enc_data.thumb_data, 0);
       xQueueSend(glove.index_queue, &enc_data.index_data, 0);
@@ -148,7 +150,7 @@ void ControllerTask(void *p_params) {
   HandState state = HOMING_STATE;
 
   // home encoder counts (fill these with your real home values)
-  Hand_Data home = {15, 15, 15, 15};
+  Hand_Data home = {20, 20, 20, 20, 20, 115};
 
   // current target positions (for POSITION_CONTROL)
   Hand_Data targets = home;  // start at home
@@ -168,8 +170,23 @@ void ControllerTask(void *p_params) {
     uint32_t enc_ring = ReadEncoder(EXT_ADC_RING);
     uint32_t enc_pinkie = ReadEncoder(EXT_ADC_PINKIE);
     uint32_t enc_palm = ReadEncoder(EXT_ADC_PALM);
-    // Serial.print("Curr Enc: ");
+    // Serial.print("Enc Thumb: ");
     // Serial.println(enc_thumb);
+
+    // Serial.print("\tEnc Index: ");
+    // Serial.println(enc_index);
+
+    // Serial.print("\t\tEnc Middle: ");
+    // Serial.println(enc_middle);
+
+    // Serial.print("\t\t\tEnc Ring: ");
+    // Serial.println(enc_ring);
+
+    // Serial.print("\t\t\t\tEnc Pinkie: ");
+    // Serial.println(enc_pinkie);
+
+    // Serial.print("\t\t\t\t\tEnc Palm: ");
+    // Serial.println(enc_palm);
 
     switch (state) {
       case HOMING_STATE: {
@@ -188,15 +205,44 @@ void ControllerTask(void *p_params) {
         bool pinkie_ok  = HomeFinger(enc_pinkie,  home.pinkie_data,
                                     PINKIE_PWM_CHANNEL,  PINKIE_PH_PIN);
 
-        bool palm_ok  = HomeFinger(enc_palm,  home.palm_data,
-                                    PALM_PWM_CHANNEL,  PALM_PH_PIN);
+        // bool palm_ok  = HomeFinger(enc_palm,  home.palm_data,
+        //                             PALM_PWM_CHANNEL,  PALM_PH_PIN);
 
-        bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok 
-                              && pinkie_ok && palm_ok;
+        // bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok 
+        //                       && pinkie_ok && palm_ok;
+
+
+        if (!thumb_ok) {
+          Serial.print("Enc Thumb: ");
+          Serial.println(enc_thumb);
+        }
+
+        if (!index_ok) {
+          Serial.print("\tEnc Index: ");
+          Serial.println(enc_index);
+        }
+
+        if (!middle_ok) {
+          Serial.print("\t\tEnc Middle: ");
+          Serial.println(enc_middle);
+        }
+
+        if (!ring_ok) {
+          Serial.print("\t\t\tEnc Ring: ");
+          Serial.println(enc_ring);
+        }
+
+        if (!pinkie_ok) {
+          Serial.print("\t\t\t\tEnc Pinkie: ");
+          Serial.println(enc_pinkie);
+        }
+
+        bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok && pinkie_ok; 
 
         if (all_homed) {
           StopAllMotors();
           state = POSITION_CONTROL_STATE;
+          // state = ERROR_STATE;
         }
         break;
       }
@@ -216,6 +262,9 @@ void ControllerTask(void *p_params) {
         if (xQueueReceive(glove.middle_queue,  &val, 0) == pdTRUE) {
           targets.middle_data = val;
         }
+
+        Serial.print("\t\tEnc Middle: ");
+        Serial.println(enc_middle);
 
         if (xQueueReceive(glove.ring_queue,  &val, 0) == pdTRUE) {
           targets.ring_data = val;
@@ -245,8 +294,8 @@ void ControllerTask(void *p_params) {
         PositionControlFinger(enc_pinkie,  targets.pinkie_data,
                               &pid_pinkie,  PINKIE_PWM_CHANNEL,  PINKIE_PH_PIN,  dt);
 
-        PositionControlFinger(enc_palm,  targets.palm_data,
-                              &pid_palm,  PALM_PWM_CHANNEL,  PALM_PH_PIN,  dt);
+        // PositionControlFinger(enc_palm,  targets.palm_data,
+        //                       &pid_palm,  PALM_PWM_CHANNEL,  PALM_PH_PIN,  dt);
 
         break;
       }
@@ -268,11 +317,12 @@ void ControllerTask(void *p_params) {
 
 void setup() {
   Serial.begin(115200);
-  delay(5000);
+  delay(2000);
   BaseType_t retVal;
 
   InitComms();
   InitADC();
+  delay(10000);
   InitMotors();
 
   retVal = xTaskCreate(ControllerTask, "Controller Task", 2048, NULL, 1, NULL);

@@ -94,7 +94,8 @@ bool HomeFinger(uint32_t enc, uint32_t home_target,
 {
   int32_t err = (int32_t)home_target - (int32_t)enc;
   int32_t mag = abs(err);
-  // Serial.println("Homing");
+  // Serial.print("PID Error: ");
+  // Serial.println(err);
 
 
   if (mag <= HOMING_THRESHOLD) {
