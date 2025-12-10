@@ -101,8 +101,33 @@ Directories</h2></td></tr>
 Robot Hand Transmitter</h1>
 <p>This folder holds the platform.io project for the transmitter. The main task of this project is to read the bend of the glove and transmit the data to the receiver.</p>
 <p>In order to mimic the user's hand motions while wearing the glove, we used flex sensors that act like potentiometers. Depending on how much the user is bending the flex sensor, the resistance will increase or decrease. By creating a simple voltage divider circuit with the flex sensor and a 100 ohm resistor, we can read how the voltage is changing through ADC channels on our ESP-32.</p>
-<p><img src="https://github.com/user-attachments/assets/309f3436-5216-49cf-a61c-420ee75bec58" alt="image" width="578" height="149" class="inline"/> </p>
-</div><!-- contents -->
+<p><img src="https://github.com/user-attachments/assets/309f3436-5216-49cf-a61c-420ee75bec58" alt="image" width="578" height="149" class="inline"/></p>
+<p>Delving into the software, we can see the basic task architecure above. There are only 2 tasks for this project with the read sensors task running every 10ms and then sending that data over to the transmit task to then be sent to the receiver.</p>
+<p>Each finger has its own queue when communicating between tasks, but to make the code simpler a <a class="el" href="class_hand.html" title="Class holding FreeRTOS queues for all glove fingers and palm.">Hand</a> class was created. This <a class="el" href="class_hand.html" title="Class holding FreeRTOS queues for all glove fingers and palm.">Hand</a> class holds all the queues and is used as a way to access each queue from the tasks.</p>
+<p>In the read sensors task, the voltage is read from each flex sensor and published to a queue. The transmit task is constantly reading from each queue until it is empty. An average is then taken while making sure to avoid dividng by zero.</p>
+<div class="fragment"><div class="line">// Read from queue until empty and take average</div>
+<div class="line">while(xQueueReceive(queue, &amp;reading, 0) == pdTRUE) {</div>
+<div class="line">  sum += reading;</div>
+<div class="line">  count++;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">if (count &gt; 0) {</div>
+<div class="line">  return (sum / count);</div>
+<div class="line">} else {</div>
+<div class="line">  return 0; // Don&#39;t want to divide by zero if nothing in queue</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Setup for ESP-NOW is all done in the setup function before the scheduler begins. To avoid broadcasting to any ESP-32s nearby, we broadcast specifically to the MAC address of the device we want</p>
+<div class="fragment"><div class="line">// Register peer</div>
+<div class="line">memcpy(peerInfo.peer_addr, BROADCAST_ADDRESS, 6);</div>
+<div class="line">peerInfo.channel = 0;  </div>
+<div class="line">peerInfo.encrypt = false;</div>
+<div class="line"> </div>
+<div class="line">// Add peer        </div>
+<div class="line">if (esp_now_add_peer(&amp;peerInfo) != ESP_OK){</div>
+<div class="line">  Serial.println(&quot;Failed to add peer&quot;);</div>
+<div class="line">  return false;</div>
+<div class="line">}</div>
+</div><!-- fragment --> </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

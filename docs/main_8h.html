@@ -176,8 +176,16 @@ const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>PALM_PIN</b
 </div><div class="memdoc">
 
 <p>Initialize ESP-NOW communication subsystem. </p>
+<p>Initialize ESP-NOW communications and register the receiver peer.</p>
 <p>Sets WiFi to station mode, initializes ESP-NOW, and registers the receive callback.</p>
 <dl class="section return"><dt>Returns</dt><dd>true on success, false on failure.</dd></dl>
+<p>This function:</p><ul>
+<li>Puts WiFi into station mode.</li>
+<li>Initializes ESP-NOW.</li>
+<li>Registers <a class="el" href="_robot_hand_transmitter_2src_2main_8cpp.html#a1ec6b84c5d1247e1390758d6df12d0dc" title="ESP-NOW send callback called after a packet is transmitted.">OnDataSent</a> as the send callback.</li>
+<li>Adds the receiver peer specified by ::BROADCAST_ADDRESS.</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false if initialization or peer registration fails.</dd></dl>
 <p>Initialize ESP-NOW communication subsystem.</p>
 <p>This function:</p><ul>
 <li>Puts WiFi into station mode.</li>

@@ -12,7 +12,7 @@ var _robot_hand_receiver_2src_2main_8cpp =
     [ "setup", "_robot_hand_receiver_2src_2main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d", null ],
     [ "StopAllMotors", "_robot_hand_receiver_2src_2main_8cpp.html#a916abd3812a43e2c032f8c40944e7f86", null ],
     [ "ad7830", "_robot_hand_receiver_2src_2main_8cpp.html#aa78fc650414b9596990f8b8ff0283cd4", null ],
-    [ "glove", "_robot_hand_receiver_2src_2main_8cpp.html#a4c132dd16d01e192def1fa99cb088e07", null ],
+    [ "glove", "_robot_hand_receiver_2src_2main_8cpp.html#ab8f27eb4ae65eb7e2eee2937e44323cd", null ],
     [ "packet_queue", "_robot_hand_receiver_2src_2main_8cpp.html#a8db5703492a9be2e7481e38d70a80b7a", null ],
     [ "peerInfo", "_robot_hand_receiver_2src_2main_8cpp.html#a460dd048dadae7ce7815b6d61b7084f6", null ]
 ];

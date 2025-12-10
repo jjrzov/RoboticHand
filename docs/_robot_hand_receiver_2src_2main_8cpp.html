@@ -119,24 +119,21 @@ Functions</h2></td></tr>
 <tr class="memdesc:a516495bcbaa8af888c43695ca3aa3563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main control FreeRTOS task implementing the hand state machine.  <br /></td></tr>
 <tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d" id="r_a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
 <tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arduino setup function.  <br /></td></tr>
-<tr class="memitem:afe461d27b9c48d5921c00d521181f12f" id="r_afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top"><a id="afe461d27b9c48d5921c00d521181f12f" name="afe461d27b9c48d5921c00d521181f12f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>loop</b> ()</td></tr>
-<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arduino main loop (unused). <br /></td></tr>
+<tr class="memitem:afe461d27b9c48d5921c00d521181f12f" id="r_afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
+<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arduino main loop (unused).  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a4c132dd16d01e192def1fa99cb088e07" id="r_a4c132dd16d01e192def1fa99cb088e07"><td class="memItemLeft" align="right" valign="top"><a id="a4c132dd16d01e192def1fa99cb088e07" name="a4c132dd16d01e192def1fa99cb088e07"></a>
-<a class="el" href="class_hand___queues.html">Hand_Queues</a>&#160;</td><td class="memItemRight" valign="bottom"><b>glove</b> = <a class="el" href="class_hand___queues.html">Hand_Queues</a>()</td></tr>
-<tr class="memdesc:a4c132dd16d01e192def1fa99cb088e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue container for desired encoder targets for each finger. <br /></td></tr>
+<tr class="memitem:ab8f27eb4ae65eb7e2eee2937e44323cd" id="r_ab8f27eb4ae65eb7e2eee2937e44323cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_hand___queues.html">Hand_Queues</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8f27eb4ae65eb7e2eee2937e44323cd">glove</a> = <a class="el" href="class_hand___queues.html">Hand_Queues</a>()</td></tr>
+<tr class="memdesc:ab8f27eb4ae65eb7e2eee2937e44323cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue container for desired encoder targets for each finger.  <br /></td></tr>
 <tr class="memitem:a8db5703492a9be2e7481e38d70a80b7a" id="r_a8db5703492a9be2e7481e38d70a80b7a"><td class="memItemLeft" align="right" valign="top"><a id="a8db5703492a9be2e7481e38d70a80b7a" name="a8db5703492a9be2e7481e38d70a80b7a"></a>
 QueueHandle_t&#160;</td><td class="memItemRight" valign="bottom"><b>packet_queue</b> = xQueueCreate(1, sizeof(<a class="el" href="struct_hand___data.html">Hand_Data</a>))</td></tr>
 <tr class="memdesc:a8db5703492a9be2e7481e38d70a80b7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue used to receive ESP-NOW packets from the glove transmitter. <br /></td></tr>
 <tr class="memitem:aa78fc650414b9596990f8b8ff0283cd4" id="r_aa78fc650414b9596990f8b8ff0283cd4"><td class="memItemLeft" align="right" valign="top"><a id="aa78fc650414b9596990f8b8ff0283cd4" name="aa78fc650414b9596990f8b8ff0283cd4"></a>
 Adafruit_ADS7830&#160;</td><td class="memItemRight" valign="bottom"><b>ad7830</b></td></tr>
 <tr class="memdesc:aa78fc650414b9596990f8b8ff0283cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">External ADC instance for rotary encoder (potentiometer) readings. <br /></td></tr>
-<tr class="memitem:a460dd048dadae7ce7815b6d61b7084f6" id="r_a460dd048dadae7ce7815b6d61b7084f6"><td class="memItemLeft" align="right" valign="top"><a id="a460dd048dadae7ce7815b6d61b7084f6" name="a460dd048dadae7ce7815b6d61b7084f6"></a>
-esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><b>peerInfo</b></td></tr>
-<tr class="memdesc:a460dd048dadae7ce7815b6d61b7084f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">ESP-NOW peer information structure. <br /></td></tr>
+<tr class="memitem:a460dd048dadae7ce7815b6d61b7084f6" id="r_a460dd048dadae7ce7815b6d61b7084f6"><td class="memItemLeft" align="right" valign="top">esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a460dd048dadae7ce7815b6d61b7084f6">peerInfo</a></td></tr>
+<tr class="memdesc:a460dd048dadae7ce7815b6d61b7084f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">ESP-NOW peer information structure.  <br /></td></tr>
 <tr id="var-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">PID controllers for each finger and palm</div></td></tr>
 <tr class="memitem:a7b21acd1aed0a2f7aae19d840dea0233" id="r_a7b21acd1aed0a2f7aae19d840dea0233"><td class="memItemLeft" align="right" valign="top"><a id="a7b21acd1aed0a2f7aae19d840dea0233" name="a7b21acd1aed0a2f7aae19d840dea0233"></a>
 <a class="el" href="struct_p_i_d__t.html">PID_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>pid_thumb</b></td></tr>
@@ -253,8 +250,16 @@ esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><b>peerIn
 </div><div class="memdoc">
 
 <p>Initialize ESP-NOW communication subsystem. </p>
+<p>Initialize ESP-NOW communications and register the receiver peer.</p>
 <p>Sets WiFi to station mode, initializes ESP-NOW, and registers the receive callback.</p>
-<dl class="section return"><dt>Returns</dt><dd>true on success, false on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false on failure.</dd></dl>
+<p>This function:</p><ul>
+<li>Puts WiFi into station mode.</li>
+<li>Initializes ESP-NOW.</li>
+<li>Registers <a class="el" href="_robot_hand_transmitter_2src_2main_8cpp.html#a1ec6b84c5d1247e1390758d6df12d0dc" title="ESP-NOW send callback called after a packet is transmitted.">OnDataSent</a> as the send callback.</li>
+<li>Adds the receiver peer specified by ::BROADCAST_ADDRESS.</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false if initialization or peer registration fails. </dd></dl>
 
 </div>
 </div>
@@ -275,6 +280,27 @@ esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><b>peerIn
 
 <p>Initialize PWM channels and GPIOs for all motors. </p>
 <p>Configures PWM frequency, resolution, output pins, and phase direction pins for each motor. </p>
+
+</div>
+</div>
+<a id="afe461d27b9c48d5921c00d521181f12f" name="afe461d27b9c48d5921c00d521181f12f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe461d27b9c48d5921c00d521181f12f">&#9670;&#160;</a></span>loop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void loop </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Arduino main loop (unused). </p>
+<p>Arduino main loop.</p>
+<p>Not used. </p>
 
 </div>
 </div>
@@ -387,7 +413,8 @@ esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><b>peerIn
 </div><div class="memdoc">
 
 <p>Arduino setup function. </p>
-<p>Initializes communication, ADC, motors, and creates FreeRTOS tasks. </p>
+<p>Initializes communication, ADC, motors, and creates FreeRTOS tasks.</p>
+<p>Initializes Serial, ESP-NOW communications, and creates all FreeRTOS tasks used by the application. </p>
 
 </div>
 </div>
@@ -408,6 +435,41 @@ esp_now_peer_info_t&#160;</td><td class="memItemRight" valign="bottom"><b>peerIn
 
 <p>Stop all motors immediately. </p>
 <p>Sets all PWM duty cycles to zero. </p>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+<a id="ab8f27eb4ae65eb7e2eee2937e44323cd" name="ab8f27eb4ae65eb7e2eee2937e44323cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8f27eb4ae65eb7e2eee2937e44323cd">&#9670;&#160;</a></span>glove</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_hand.html">Hand</a> glove = <a class="el" href="class_hand___queues.html">Hand_Queues</a>()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Queue container for desired encoder targets for each finger. </p>
+<p>Global <a class="el" href="class_hand.html" title="Class holding FreeRTOS queues for all glove fingers and palm.">Hand</a> instance representing the glove and its sensor queues. </p>
+
+</div>
+</div>
+<a id="a460dd048dadae7ce7815b6d61b7084f6" name="a460dd048dadae7ce7815b6d61b7084f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a460dd048dadae7ce7815b6d61b7084f6">&#9670;&#160;</a></span>peerInfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">esp_now_peer_info_t peerInfo</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>ESP-NOW peer information structure. </p>
+<p>ESP-NOW peer configuration information. </p>
 
 </div>
 </div>
