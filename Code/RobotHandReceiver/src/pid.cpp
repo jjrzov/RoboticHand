@@ -64,19 +64,12 @@ void PositionControlFinger(uint32_t enc, uint32_t target,
                            float dt)
 {
   float error = (float)target - (float)enc;
-  // Serial.print("PID Error: ");
-  // Serial.println(error);
   float u = PID_Step(pid, error, dt);  // signed
 
   SetPhase(u, phase_pin); // Find direction to move in
-  // Serial.print("UUUUUUUUUUUUUUUUUUUUUU: ");
-  // Serial.println(u);
 
   float mag = fabsf(u);
   int pwm = (int)mag;
-
-  // Serial.print("PWM: ");
-  // Serial.println(pwm);
 
   // Add a minimum like homing
   const int POS_PWM_MIN = 300;   // tune this
@@ -94,9 +87,6 @@ bool HomeFinger(uint32_t enc, uint32_t home_target,
 {
   int32_t err = (int32_t)home_target - (int32_t)enc;
   int32_t mag = abs(err);
-  // Serial.print("PID Error: ");
-  // Serial.println(err);
-
 
   if (mag <= HOMING_THRESHOLD) {
     ledcWrite(pwm_channel, 0);  // Close enough stop this motor

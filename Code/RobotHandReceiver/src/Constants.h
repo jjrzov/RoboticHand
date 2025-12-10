@@ -87,8 +87,7 @@ class Hand_Queues {
 
 typedef enum {
     HOMING_STATE,
-    POSITION_CONTROL_STATE,
-    ERROR_STATE
+    POSITION_CONTROL_STATE
 } HandState;
 
 #endif

@@ -205,11 +205,11 @@ void ControllerTask(void *p_params) {
         bool pinkie_ok  = HomeFinger(enc_pinkie,  home.pinkie_data,
                                     PINKIE_PWM_CHANNEL,  PINKIE_PH_PIN);
 
-        // bool palm_ok  = HomeFinger(enc_palm,  home.palm_data,
-        //                             PALM_PWM_CHANNEL,  PALM_PH_PIN);
+        bool palm_ok  = HomeFinger(enc_palm,  home.palm_data,
+                                    PALM_PWM_CHANNEL,  PALM_PH_PIN);
 
-        // bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok 
-        //                       && pinkie_ok && palm_ok;
+        bool all_homed = thumb_ok && index_ok && middle_ok && ring_ok 
+                              && pinkie_ok && palm_ok;
 
 
         if (!thumb_ok) {
@@ -242,7 +242,6 @@ void ControllerTask(void *p_params) {
         if (all_homed) {
           StopAllMotors();
           state = POSITION_CONTROL_STATE;
-          // state = ERROR_STATE;
         }
         break;
       }
@@ -262,9 +261,6 @@ void ControllerTask(void *p_params) {
         if (xQueueReceive(glove.middle_queue,  &val, 0) == pdTRUE) {
           targets.middle_data = val;
         }
-
-        Serial.print("\t\tEnc Middle: ");
-        Serial.println(enc_middle);
 
         if (xQueueReceive(glove.ring_queue,  &val, 0) == pdTRUE) {
           targets.ring_data = val;
@@ -294,17 +290,12 @@ void ControllerTask(void *p_params) {
         PositionControlFinger(enc_pinkie,  targets.pinkie_data,
                               &pid_pinkie,  PINKIE_PWM_CHANNEL,  PINKIE_PH_PIN,  dt);
 
-        // PositionControlFinger(enc_palm,  targets.palm_data,
-        //                       &pid_palm,  PALM_PWM_CHANNEL,  PALM_PH_PIN,  dt);
+        PositionControlFinger(enc_palm,  targets.palm_data,
+                              &pid_palm,  PALM_PWM_CHANNEL,  PALM_PH_PIN,  dt);
 
         break;
       }
-
-      case ERROR_STATE: {
-        StopAllMotors();
-
-        break;
-      }
+      
       default:
         StopAllMotors();
 
