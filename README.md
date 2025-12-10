@@ -8,7 +8,7 @@ that can be worn by the user. The user has control over each finger and a
 palm bending motion on the robot hand.
 
 The repository is split into 3 parts: 
-* Mechanical Design Files
+* Mechanical Design Files (<https://github.com/jjrzov/RoboticHand/tree/main/CAD>)
 * PCB Files
 * Software Files    (<https://github.com/jjrzov/RoboticHand/tree/main/Code>)
 
