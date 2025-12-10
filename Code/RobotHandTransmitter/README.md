@@ -10,4 +10,4 @@ the flex sensor, the resistance will increase or decrease. By creating a simple
 voltage divider circuit with the flex sensor and a 100 ohm resistor, we can read
 how the voltage is changing through ADC channels on our ESP-32.
 
-<img width="578" height="149" alt="image" src="https://github.com/user-attachments/assets/309f3436-5216-49cf-a61c-420ee75bec58" />
+<img width="535" height="138" alt="image" src="https://github.com/user-attachments/assets/9d96681c-92c9-408f-bb6d-774fe160ebec" />
