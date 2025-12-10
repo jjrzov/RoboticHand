@@ -117,7 +117,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Hand_Data data;
   memcpy(&data, incomingData, sizeof(data));
   xQueueSend(packet_queue, &data, 0);
-  // Serial.println(data.index_data);
+
   return;
 }
 
@@ -240,8 +240,8 @@ void StopAllMotors() {
 void ControllerTask(void *p_params) {
   HandState state = HOMING_STATE;
 
-  // home encoder counts (fill these with your real home values)
-  Hand_Data home = {20, 20, 20, 20, 20, 115};
+  // home encoder counts
+  Hand_Data home = {20, 20, 20, 20, 20, 20};
 
   // current target positions (for POSITION_CONTROL)
   Hand_Data targets = home;  // start at home

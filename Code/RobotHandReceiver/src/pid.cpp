@@ -43,12 +43,12 @@ void PID_Init(PID_t *pid, float kp, float ki, float kd, float out_min, float out
  */
 void InitPIDs() {
   // output range: -1023..1023 for 10-bit PWM
-  PID_Init(&pid_thumb,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
-  PID_Init(&pid_index,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
-  PID_Init(&pid_middle,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
-  PID_Init(&pid_ring,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
-  PID_Init(&pid_pinkie,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
-  PID_Init(&pid_palm,  2.0f, 0.0f, 0.0f, -1023.0f, 1023.0f);
+  PID_Init(&pid_thumb,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
+  PID_Init(&pid_index,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
+  PID_Init(&pid_middle,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
+  PID_Init(&pid_ring,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
+  PID_Init(&pid_pinkie,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
+  PID_Init(&pid_palm,  2.0f, 0.2f, 0.5f, -1023.0f, 1023.0f);
   return;
 }
 
